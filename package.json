@@ -1,0 +1,32 @@
+{
+  "name": "reactmastende",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "apollo-client": "^1.9.3",
+    "graphql-tag": "^2.4.2",
+    "lottie-react-native": "^2.2.7",
+    "moment": "^2.18.1",
+    "react": "16.0.0-alpha.12",
+    "react-apollo": "^1.4.16",
+    "react-native": "0.48.4",
+    "react-native-elements": "^0.17.0",
+    "react-native-loader": "^1.1.0",
+    "react-native-radio-buttons": "^1.0.0",
+    "react-native-vector-icons": "^4.4.2",
+    "react-navigation": "^1.0.0-beta.13"
+  },
+  "devDependencies": {
+    "babel-jest": "21.2.0",
+    "babel-preset-react-native": "4.0.0",
+    "jest": "21.2.1",
+    "react-test-renderer": "16.0.0-alpha.12"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
