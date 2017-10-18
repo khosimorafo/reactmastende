@@ -1,10 +1,10 @@
 // Some imports
 import React, {Component} from 'react';
-import { gql, ApolloClient, createNetworkInterface, ApolloProvider, graphql } from 'react-apollo';
+import { ApolloClient, createNetworkInterface, ApolloProvider } from 'react-apollo';
 
-import { StackNavigator, addNavigationHelpers } from "react-navigation";
-import {Text, View} from "react-native";
+import { StackNavigator } from "react-navigation";
 import Routes from "./router";
+
 
 const AppNavigator = StackNavigator(Routes,
                                     {
@@ -27,6 +27,8 @@ class AppWithNavigationState extends Component {
 
 export default class App extends Component {
     createClient() {
+
+        //let objects = realm.objects('Mastende');
         // Initialize Apollo Client with URL to our server
         return new ApolloClient({
             networkInterface: createNetworkInterface({
@@ -35,8 +37,6 @@ export default class App extends Component {
             }),
             dataIdFromObject: o => o.id
         });
-
-
     }
 
     render() {

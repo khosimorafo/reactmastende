@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import { graphql, compose } from 'react-apollo'
 import gql from 'graphql-tag'
 
-import { Bubbles, DoubleBounce, Bars, Pulse } from 'react-native-loader';
-
 import moment from 'moment'
 
 import {
@@ -22,6 +20,8 @@ import {
     Button
 } from 'react-native-elements';
 
+import Animation from 'lottie-react-native';
+
 class PaymentConfirmation extends Component {
 
     static propTypes = {
@@ -39,20 +39,38 @@ class PaymentConfirmation extends Component {
 
         this.invoice = this.props.navigation.state.params.invoice;
         this.tenant = this.props.navigation.state.params.data.tenant;
-        this.payment = { invoiceid: this.invoice.id, tenantid: this.tenant.id,
-            date:new Date(), description:'', amount: 0.0, mode:'Cash' };
+        this.payment = {
+                            invoiceid: this.invoice.id,
+                            tenantid: this.tenant.id,
+                            date:new Date(), description:'',
+                            amount: 0.0, mode:'Cash'
+        };
 
-        this.state = { loading: false, success:false, payment_amount: this.invoice.balance };
+        this.state = {
+                        progress: new Animated.Value(0), on: false,
+                        initial: true, loading: false, success:false,
+                        payment_amount: this.invoice.balance
+        };
+    }
 
+    componentDidMount() {
+
+        this._derivePayment();
     }
 
     _handleSave = async () => {
+
+        Animated.timing(this.state.progress, {
+            toValue: 1,
+            duration: 5000,
+        }).start();
 
         this._derivePayment();
 
         let p = {payment : this.payment};
         console.log ("Payment log is: ", p);
 
+        this.state.initial = false;
         this.state.loading = true;
 
         this.forceUpdate();
@@ -61,56 +79,56 @@ class PaymentConfirmation extends Component {
             .then(({ data }) => {
 
                 this._success();
-                console.log('got data', data);
+                console.log('got data', this.state.data);
 
             }).catch((error) => {
 
             //this.state.loading = false;
             console.log('there was an error sending the query', error);
         });
-
-
     };
 
     _success(){
 
-        console.log('Succcessfsdsf');
+        console.log('Succcesfully persisted payment');
+
+        this.state.progress = new Animated.Value(0);
 
         this.state.loading = false;
         this.state.success = true;
 
         this.forceUpdate();
+
+        Animated.timing(this.state.progress, {
+            toValue: 0.47,
+            duration: 5000,
+        }).start(this._navigateToTenantDetail);
     }
 
-    _handleInvoiceUpdate = async () => {
+    _failure(){
 
-        const { id } = this.invoice;
-
-        let status = 'Draft';
-
-        let balance = this.invoice.balance - this.payment.amount;
-
-        if (balance > 0) { status = 'Partial'; }
-        if (balance === this.invoice.amount ) { status = 'Unpaid'; }
-        if (balance === 0) { status = 'Paid'; }
-
-        console.log('inv id : ', id);
-        console.log('new balance : ', balance);
-        console.log('new status : ', status);
+        console.log('Failure to persist payment');
 
 
-        await this.props.updateInvoiceMutation({variables: { id, balance, status }})
-            .then(({ data }) => {
-                console.log('got data', data);
 
+        this.state.progress = new Animated.Value(0.5);
+        Animated.timing(this.state.progress, {
+            toValue: 1,
+            duration: 3000,
+        }).start();
 
-            }).catch((error) => {
-                console.log('there was an error sending the query', error);
-            });
+        this.state.loading = false;
+        this.state.success = false;
+
+        this.forceUpdate();
+    }
+
+    _navigateToTenantDetail = (e) => {
+
+       this.props.navigation.navigate('TenantDetails', {tenantId : this.tenant.id});
     };
 
     _derivePayment(){
-
 
         let startDate = moment(this.payment.date, 'YYYY/MM/DD');
 
@@ -126,38 +144,19 @@ class PaymentConfirmation extends Component {
         this.payment.amount = this.state.payment_amount;
     }
 
-    componentWillMount(){
-
-        this._derivePayment();
-    }
-
     render(){
 
         console.log("Render has been called!");
 
-        if (this.state.loading) {
+        if(this.state.initial) {
 
-            return (
-                <View style={styles.container}>
-                    <Bars size={20} color="#FDAAFF" />
-                </View>
-            )
-        }
-
-        if (this.state.success) {
-            //console.log(this.props.data.error);
-            return (
-                <View style={styles.container}>
-                    <DoubleBounce size={20} color="#FFFFFF" />
-                </View>
-            )
-
-        } else {
             return (
 
                 <View style={styles.container}>
 
                     <Text style={{color: 'white', marginTop: 10, fontSize: 24,}}>{this.tenant.name}</Text>
+                    <Text style={{color: 'white', marginTop: 10, fontSize: 18,}}>{this.invoice.periodname}</Text>
+
                     <Text style={{color: 'white', marginTop: 10, fontSize: 18,}}>{this.payment.mode}</Text>
 
                     <View style={{
@@ -191,6 +190,48 @@ class PaymentConfirmation extends Component {
             )
         }
 
+        if (this.state.loading) {
+
+            return (
+                <Animation
+                    style={{
+                        flex: 1
+                    }}
+                    source={require('../../animations/circle_grow.json')}
+                    progress={this.state.progress}
+                />
+            )
+        }
+
+        if (this.state.success) {
+
+            return (
+                <Animation
+                    style={{
+                        flex: 1
+                    }}
+                    source={require('../../animations/loader-success-failed.json')}
+                    progress={this.state.progress}
+                />
+            )
+        }
+
+        if (!this.state.success)  {
+
+            return (
+
+                <View>
+
+                    <Animation
+                        style={{
+                            flex: 1
+                        }}
+                        source={require('../../animations/loader-success-failed.json')}
+                        progress={this.state.progress}
+                    />
+                </View>
+            )
+        }
     }
 }
 

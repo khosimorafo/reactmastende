@@ -3,6 +3,7 @@ package com.reactmastende;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;

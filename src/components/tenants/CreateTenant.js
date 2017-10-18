@@ -10,6 +10,9 @@ import { Bubbles, DoubleBounce, Bars, Pulse } from 'react-native-loader';
 
 import moment from 'moment'
 
+import {Card, FormLabel, FormInput} from "react-native-elements";
+import {SegmentedControls} from "react-native-radio-buttons";
+
 class CreateTenant extends Component {
 
     static propTypes = {
@@ -33,8 +36,16 @@ class CreateTenant extends Component {
         let day = currentTime.getDate();
         let year = currentTime.getFullYear();
 
+        let site = props.navigation.state.params.site;
+
+        // Bad Bad Bad
+        if (site === 'Siphakamile'){
+
+            site = 'Sipha'
+        }
+
         //this.handleFormSubmit = this.handleFormSubmit.bind(this);
-        this.state = { id: '', name:'', zaid:'', mobile:'',phone:'',
+        this.state = { id: '', name:'', zaid:'', mobile:'',phone:'', selectedSiteSegment: site,
             selectedMoveInDate: new Date(year, month, day), simpleText: 'pick a date', email:'', imageurl:'',
             defaultText: 'Khetha usuku lokungena emqashweni.', loading: false, success:false };
 
@@ -116,7 +127,7 @@ class CreateTenant extends Component {
     render() {
 
         const genderOptions = ['MALE', 'FEMALE'];
-        const siteOptions = ['ABC', 'MGANKA', 'SIPHAKAMILE'];
+        const siteOptions = ['ABC', 'MGANKA', 'SIPHA', 'OSLO'];
 
         const { selectedMoveInDate } = this.state;
         const startDate = selectedMoveInDate ? selectedMoveInDate.toString() : '';
@@ -189,7 +200,7 @@ class CreateTenant extends Component {
                             <SegmentedControls
                                 options={ siteOptions }
                                 onSelection={ setSelectedSiteOption.bind(this) }
-                                selectedOption={ this.state.selectedSiteSegment }/>
+                                selectedOption={ this.state.selectedSiteSegment.toUpperCase() }/>
                         </View>
 
                         <View style={{marginTop: 5, padding: 10, backgroundColor: 'white'}}>
