@@ -10,10 +10,12 @@ import gql from 'graphql-tag'
 import Animation from 'lottie-react-native';
 import ActionButton from "react-native-action-button";
 
-let GiftedListView = require('react-native-gifted-listview');
-
+import { connect } from 'react-redux'
+import { configurationActionCreators } from '../../actions/configurations'
+import TenantsList from "./TenantsList";
 
 class Tenants extends Component {
+
 
     constructor(props) {
 
@@ -27,25 +29,17 @@ class Tenants extends Component {
     }
 
     componentDidMount() {
+
         Animated.timing(this.state.progress, {
+
             toValue: 1,
             duration: 3000,
         }).start();
     }
 
-
-    _onOpenTenant = (tenant) => {
-        this.setState({
-
-            selectedTenantId : tenant.id
-        });
-
-        this.props.navigation.navigate('TenantDetails', {tenantId : tenant.id});
-    };
-
     _onCreateTenant = () => {
 
-        console.log ('Create Tenant Site', this.state.site);
+        //console.log ('Create Tenant Site', this.state.site);
         this.props.navigation.navigate('CreateTenant', {site: this.state.site});
     };
 
@@ -58,15 +52,12 @@ class Tenants extends Component {
 
     render () {
 
-        this.state.site = this.props.data.variables.text;
-
         const { navigate } = this.props.navigation.navigate;
 
         if (this.props.data.error) {
             console.log(this.props.data.error);
             return (
                 <View>
-                    <Button title="New Tenant" onPress={() => navigate('CreateTenant')} />
                     <Text style={{marginTop: 64}}>An unexpected error occurred</Text>
                 </View>)
         }
@@ -75,27 +66,38 @@ class Tenants extends Component {
 
             return (
                 <Animation
-                    style={{
-                        flex: 1
-                    }}
+                    style={{flex: 1}}
                     source={require('../../animations/circle_grow.json')}
                     progress={this.state.progress}
                 />
             )
         } else {
-            console.log(this.props.data.tenantList)
+
+            //console.log(this.props.data.tenantList)
         }
 
-        console.log("DATA : ", this.props.data);
-
         return (
+
+
+            <View style={styles.container}>
+
+                <TenantsList navigation={this.props.navigation} tenants={this.props.data.tenants} type="flat"/>
+
+                <ActionButton
+                    buttonColor="rgba(231,76,60,1)"
+                    onPress={() => this._onCreateTenant()}
+                />
+            </View>);
+
+
+        /*return (
 
 
 
             <View style={styles.container}>
 
                 <List>
-                    {this.props.data.tenantsBySite.map((tenant) => (
+                    {this.props.data.tenants.map((tenant) => (
 
                         <ListItem
                             key={tenant.id}
@@ -113,10 +115,9 @@ class Tenants extends Component {
                     onPress={() => this._onCreateTenant()}
                 />
             </View>
-        )
+        )*/
     }
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -124,8 +125,8 @@ const styles = StyleSheet.create({
     },
 });
 
-const TenantQuery = gql`query TenantsBySite($text: String!) { 
-  tenantsBySite (text: $text) {
+const TenantQuery = gql`query  { 
+  tenants (text: "") {
     id
     name
     zaid
@@ -139,12 +140,12 @@ const TenantQuery = gql`query TenantsBySite($text: String!) {
 const TenantsData = graphql(TenantQuery, {
     options: (props) => {
 
-        console.log('Site name is : ', props.site);
+        //console.log('Site name is : ', props.site);
         return {
             fetchPolicy: 'cache-and-network',
-            variables: {
+            /*variables: {
                 text: props.site,
-            }
+            }*/
         }
     }
 })(Tenants);

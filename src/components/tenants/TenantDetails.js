@@ -3,7 +3,7 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import {sortBy} from "lodash";
 
-var array = require('lodash/array');
+const array = require('lodash/array');
 
 import {
     View,
@@ -54,7 +54,13 @@ class TenantDetails extends Component {
 
     componentDidMount() {
 
+        this.props.navigation.setParams({
+
+            name: this.props.navigation.state.params.name
+        });
+
         Animated.timing(this.state.progress, {
+
             toValue: 1,
             duration: 5000,
         }).start();
@@ -76,7 +82,8 @@ class TenantDetails extends Component {
         _invoice.tenantname = this.props.data.tenant.name;
         //console.log('Customer Payload : ', this.props.data.tenant);
         //console.log('Invoice Payload : ', _invoice);
-        this.props.navigation.navigate('PaymentConfirmation', { invoice : _invoice, data: this.props.data});
+        this.props.navigation.navigate('PaymentConfirmation',
+            { invoice : _invoice, data: this.props.data, outstanding: this.state.outstanding});
     };
 
     _goToMain = () => {
@@ -121,6 +128,8 @@ class TenantDetails extends Component {
             console.log(this.props.data.error);
             return (<Text style={{marginTop: 64}}>An unexpected error occurred</Text>)
         } else {
+
+
 
             console.log("Customer is : ", this.props.data.tenant);
 

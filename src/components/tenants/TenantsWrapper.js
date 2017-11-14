@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { StyleSheet } from 'react-native';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
-import FilteredTenantPage from './SimplePage';
-
+import FilteredTenantPage from './TenantsPage';
 
 import type { NavigationState } from 'react-native-tab-view/types';
 
@@ -93,8 +92,6 @@ export default class TenantsWrapper extends PureComponent<void, *, State> {
                 renderScene={this._renderScene}
                 renderHeader={this._renderHeader}
                 onIndexChange={this._handleIndexChange}
-
-
             />
         );
     }

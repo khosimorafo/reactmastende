@@ -1,20 +1,12 @@
-// Some imports
 import React, {Component} from 'react';
-import { ApolloClient, createNetworkInterface, ApolloProvider } from 'react-apollo';
-
 import { StackNavigator } from "react-navigation";
+import { ApolloProvider } from 'react-apollo';
+
 import Routes from "./router";
+import configureStore from "./store/store";
+import client  from './store/apolloClient';
 
-
-const AppNavigator = StackNavigator(Routes,
-                                    {
-                                        headerMode: 'none',
-                                    });
-
-import moment from 'moment';
-
-let moveinDate = moment(new Date(), 'YYYY/MM/DD');
-
+let AppNavigator = StackNavigator(Routes);
 
 class AppWithNavigationState extends Component {
 
@@ -26,24 +18,22 @@ class AppWithNavigationState extends Component {
 }
 
 export default class App extends Component {
-    createClient() {
 
-        //let objects = realm.objects('Mastende');
-        // Initialize Apollo Client with URL to our server
-        return new ApolloClient({
-            networkInterface: createNetworkInterface({
-                uri: 'https://intense-reaches-57392.herokuapp.com/graphql?',
+    constructor(props) {
 
-            }),
-            dataIdFromObject: o => o.id
-        });
+        super(props);
+        this.state = {
+            isLoading: true,
+            store: configureStore(() => this.setState({ isLoading: false })),
+        };
     }
+
 
     render() {
         return (
             // Feed the client instance into your React component tree
-            <ApolloProvider client={this.createClient()}>
-                <AppWithNavigationState />
+            <ApolloProvider store={this.state.store} client={client}>
+                <AppNavigator />
             </ApolloProvider>
         );
     }

@@ -10,7 +10,7 @@ import {
     StyleSheet,
     Animated,
     Image,
-    Easing
+    Easing,
 } from 'react-native';
 
 import {
@@ -21,6 +21,9 @@ import {
 } from 'react-native-elements';
 
 import Animation from 'lottie-react-native';
+
+
+import Printer from './Printer'
 
 class PaymentConfirmation extends Component {
 
@@ -39,6 +42,8 @@ class PaymentConfirmation extends Component {
 
         this.invoice = this.props.navigation.state.params.invoice;
         this.tenant = this.props.navigation.state.params.data.tenant;
+        this.outstanding = this.props.navigation.state.params.outstanding;
+
         this.payment = {
                             invoiceid: this.invoice.id,
                             tenantid: this.tenant.id,
@@ -55,10 +60,36 @@ class PaymentConfirmation extends Component {
 
     componentDidMount() {
 
+        this.props.navigation.setParams({
+
+            period: this.props.navigation.state.params.invoice.periodname
+        });
+
         this._derivePayment();
     }
 
-    _handleSave = async () => {
+    _handlePrinter () {
+
+        const _outstanding = this.outstanding - this.payment.amount;
+
+        let data = {
+
+            "name": this.tenant.name,
+            "fiscal_period": this.invoice.periodname,
+            "amount_paid": "R " + this.payment.amount,
+            "payment_date": this.payment.date,
+            "outstanding_invoices_amount": "R " + _outstanding,
+        };
+
+        let printer = new Printer();
+
+        return printer.print(data);
+    };
+
+    _handleSave () {
+
+        this._handlePrinter()
+            .then({});
 
         Animated.timing(this.state.progress, {
             toValue: 1,
@@ -83,14 +114,14 @@ class PaymentConfirmation extends Component {
 
             }).catch((error) => {
 
-            //this.state.loading = false;
+            this._failure();
             console.log('there was an error sending the query', error);
         });
     };
 
-    _success(){
+    _success() {
 
-        console.log('Succcesfully persisted payment');
+        console.log('Successfully persisted payment');
 
         this.state.progress = new Animated.Value(0);
 
@@ -108,8 +139,6 @@ class PaymentConfirmation extends Component {
     _failure(){
 
         console.log('Failure to persist payment');
-
-
 
         this.state.progress = new Animated.Value(0.5);
         Animated.timing(this.state.progress, {

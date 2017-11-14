@@ -1,8 +1,11 @@
-import { combineReducers } from 'redux'
-import people from './people'
+import { combineReducers } from 'redux';
+import { configurationsReducer, configurationReducer } from '../reducers/configurations'
+import client from '../store/apolloClient';
 
 const rootReducer = combineReducers({
-    people
+    configs: configurationsReducer,
+    config:  configurationReducer,
+    apollo:  client.reducer(),
 });
 
-export default rootReducer
+export default rootReducer;

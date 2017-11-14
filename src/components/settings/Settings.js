@@ -1,75 +1,146 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react'
+import {Button, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import Modal from 'react-native-modal';
 
-import {Card, FormLabel, FormInput} from "react-native-elements";
-import {Button, ScrollView} from "react-native";
+import { connect } from 'react-redux'
+import { configurationActionCreators } from '../../actions/configurations'
 
-import store from 'react-native-simple-store';
+import ConfigList from "./ConfigList";
+import ViewConfig from "./ViewConfig";
+import EditConfig from "./EditConfig";
 
+class Settings extends Component {
 
-export default class Settings extends Component{
+    state = {
+        isModalVisible: false
+    };
 
-    constructor(props) {
+    constructor(){
 
-        super(props);
-
-        this.state = {
-
-            graphql : { location:'', resource:'', uri:''},
-            printer : { location:'', uri:''}
-        };
+        super();
     }
 
-    static componentDidMount() {
 
-        console.log('Graphql server settings : ', ql_server);
-    }
+    onAddConfig = (config) => {
 
-    _saveConfig () {
+        const {dispatch} = this.props;
+        dispatch(configurationActionCreators.add(config));
 
+        this.setState({ visibleModal: null })
+    };
 
-        // this.setState({ input: '' });
-    }
+    onConfigSelected = (config) => {
 
-    _deleteConfig (resource) {
+        const {dispatch} = this.props;
+        dispatch(configurationActionCreators.select(config));
 
+        this.setState({ visibleModal: 0 });
+    };
 
-    }
+    onRemoveConfig = (name) => {
 
-    render(){
+        const {dispatch} = this.props;
+        dispatch(configurationActionCreators.remove(name));
+
+        this.setState({ visibleModal: null });
+    };
+
+    _renderButton = (text, onPress) => (
+
+        <TouchableOpacity onPress={onPress}>
+            <View style={styles.button}>
+                <Text>{text}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+
+    _renderModalContent = () => (
+        <View style={styles.modalContent}>
+            <ViewConfig config={this.props.config}/>
+            {this._renderButton('Delete', () => this.onRemoveConfig(this.props.config.name))}
+            {this._renderButton('Close', () => this.setState({ visibleModal: null }))}
+        </View>
+    );
+
+    _renderAddNewConfig = () => (
+        <View style={styles.modalContent}>
+            <EditConfig onSubmitSave={this.onAddConfig}/>
+        </View>
+    );
+
+    render() {
 
         return (
+            <ScrollView>
 
-            <ScrolcdlView>
+                {this._renderButton('Add New Config!', () => this.setState({ visibleModal: 1 }))}
 
-                <Card title="Server Information" containerStyle={{ marginTop: 15 }}>
-                    <FormLabel>Resource</FormLabel>
-                    <FormInput ref='forminput' onChangeText={(text) => { this.state.graphql.resource = text }}
-                               value={this.state.graphql.resource}/>
+                <ConfigList onPressItem={this.onConfigSelected} />
 
-                    <FormLabel>Location</FormLabel>
-                    <FormInput ref='forminput' onChangeText={(text) => { this.state.graphql.location = text }}
-                               value={this.state.graphql.location}/>
+                <Modal
+                    isVisible={this.state.visibleModal === 0}
+                    backdropOpacity={1}
+                    animationIn={'zoomInDown'}
+                    animationOut={'zoomOutUp'}
+                    animationInTiming={1000}
+                    animationOutTiming={1000}
+                    backdropTransitionInTiming={1000}
+                    backdropTransitionOutTiming={1000}
+                >
+                    {this._renderModalContent()}
+                </Modal>
 
-                    <FormLabel>URI</FormLabel>
-                    <FormInput ref='forminput' onChangeText={(text) => { this.state.graphql.uri = text }}
-                               value={this.state.graphql.uri}/>
+                <Modal
+                    isVisible={this.state.visibleModal === 1}
+                    backdropOpacity={1}
+                    animationIn={'zoomInDown'}
+                    animationOut={'zoomOutUp'}
+                    animationInTiming={1000}
+                    animationOutTiming={1000}
+                    backdropTransitionInTiming={1000}
+                    backdropTransitionOutTiming={1000}
+                >
+                    {this._renderAddNewConfig()}
+                </Modal>
 
-                </Card>
-
-                <Card title="Printer Information" containerStyle={{ marginTop: 15 }}>
-                    <FormLabel>Location</FormLabel>
-                    <FormInput ref='forminput' onChangeText={(text) => { this.state.printer.location = text }}
-                               value={this.state.printer.location}/>
-
-                    <FormLabel>URI</FormLabel>
-                    <FormInput ref='forminput' onChangeText={(text) => { this.state.printer.uri = text }}
-                               value={this.state.printer.uri}/>
-                </Card>
-
-                <Button title={"save"} onPress={ () => {this._saveConfig()} }>Save</Button>
-
-            </ScrolcdlView>
-
+            </ScrollView>
         )
     }
 }
+
+const styles = StyleSheet.create({
+
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    button: {
+        backgroundColor: 'lightblue',
+        padding: 12,
+        margin: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 4,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 5,
+        borderRadius: 4,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    bottomModal: {
+        justifyContent: 'flex-end',
+        margin: 0,
+    },
+
+});
+
+const mapStateToProps = (state) => ({
+
+    configs: state.configs,
+    config: state.config.config,
+});
+
+export default connect(mapStateToProps)(Settings)

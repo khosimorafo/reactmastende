@@ -86,9 +86,7 @@ class CreateTenant extends Component {
 
         this.forceUpdate();
 
-
         this.props.navigation.navigate('TenantDetails', {tenantId : this.state.id});
-
     }
 
     _deriveTenant(){
