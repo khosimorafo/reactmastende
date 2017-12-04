@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-import Tenants from './Tenants';
+import Tenants from '../../containers/VisibleTenants';
 
 
 export default function CurrentStateIndicator({ state, style }: *) {

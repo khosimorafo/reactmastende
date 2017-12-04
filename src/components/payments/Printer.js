@@ -1,8 +1,8 @@
-import { store } from '../../store/store'
+//import { store } from '../../store/store'
 
 export default class Printer{
 
-
+/*
     constructor () {
 
         let state = store.getState();
@@ -10,7 +10,7 @@ export default class Printer{
 
         //this.configs.map
     }
-
+*/
     renderItem = (item, i) => {
 
         let name = item.name;

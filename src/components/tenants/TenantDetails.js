@@ -86,22 +86,6 @@ class TenantDetails extends Component {
             { invoice : _invoice, data: this.props.data, outstanding: this.state.outstanding});
     };
 
-    _goToMain = () => {
-
-        console.log('hello main');
-        this.props.navigation.navigate('PaymentConfirmation', {data: this.props.data});
-    };
-
-    _goToEdit = () => {
-
-        this.props.navigation.navigate('Tenants');
-    };
-
-    _viewPaymentHistory = () => {
-
-        this.props.navigation.navigate('Tenants');
-    };
-
     _createNextTenantInvoice = () => {
 
         this.props.navigation.navigate('NextInvoice', { tenant:this.props.data.tenant});

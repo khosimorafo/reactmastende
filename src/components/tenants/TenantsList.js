@@ -11,34 +11,14 @@ const extractKey = ({id}) => id;
 
 export default class TenantsList extends Component{
 
-
     constructor(props) {
 
         super(props);
         this.state = {
 
-
             list: props.tenants,
-            data: props.tenants,
         };
     }
-
-    _search = (text) => {
-
-        this.state.list = this.state.data;
-
-        copy = [];
-
-        this.state.list.forEach((tenant) => {
-
-            if (tenant.name.toUpperCase().startsWith(text.toUpperCase())){
-
-                copy.push(tenant);
-            }
-        });
-
-        this.setState({ list: copy});
-    };
 
     _onOpenTenant = (tenant) => {
 
@@ -61,31 +41,12 @@ export default class TenantsList extends Component{
 
             return (
 
-                <View style={styles.container}>
-
-                    <View style={{ marginTop: 10, marginBottom: 0 }}>
-                        <SearchBar
-                            lightTheme
-                            on
-                            noIcon
-                            clearIcon
-                            onChangeText={this._search}
-                            textInputRef="textInputRef"
-                            placeholder="Type Here..."
-                        />
-                    </View>
+                <View contentContainerStyle={{ paddingTop: 200 }}>
 
                     <List>
                         {this.state.list.map((tenant) => (
 
-                            <ListItem
-                                key={tenant.id}
-                                roundAvatar
-                                avatar={{ uri: tenant.imageUrl }}
-                                title={`${tenant.name.toUpperCase()}`}
-                                subtitle={`${tenant.site.toUpperCase()}`}
-                                onPress={() => this._onOpenTenant(tenant)}
-                            />
+                            <Tenant onClick={this._onOpenTenant} tenant={tenant} />
                         ))}
                     </List>
 
@@ -121,7 +82,6 @@ export default class TenantsList extends Component{
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 20,
         flex: 1,
     },
     row: {
@@ -141,9 +101,4 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
     },
-});
-
-const mapStateToProps = (state) => ({
-
-    list: state.tenants,
 });

@@ -6,65 +6,31 @@ import PaymentConfirmation from "./components/payments/PaymentConfirmation";
 import InvoiceCreator from "./components/invoices/InvoiceCreator";
 import TenantsWrapper from "./components/tenants/TenantWrapper2";
 import Settings from "./components/settings/Settings";
-import {Button} from "react-native";
-import Tenants from "./components/tenants/Tenants";
-import PopupMenu from "./utils/PopupMenu";
-
-
-onEdit = () => {
-
-    console.log('Edit clicked');
-};
-
-goToSettings = (navigation) => {
-
-    navigation.navigate('Settings');
-};
+import SiteMap from "./components/site/SiteMap"
+import Tenants from "./containers/Tenants";
+import Tenant from "./containers/Tenant";
+import Payment from "./containers/Payment"
+import { StackNavigator } from "react-navigation";
 
 let Routes = {
 
-    Home: { screen: Tenants,
+    Home: { screen: SiteMap },
 
-            navigationOptions: ({navigation}) => ({
-                title: `Uhla lwabaqashi...`,
-                headerStyle:{ backgroundColor: 'transparent'},
-                //headerRight: <Button title="Settings" onPress={() => navigation.navigate('Settings')}/>,
-                headerRight: <PopupMenu actions={['ABC', 'Mganka', 'Siphakamile', 'Oslo' , 'Settings']} onPress={(eventName, index) => {
-                        if (eventName !== 'itemSelected') return;
-
-                        //console.log('Event is', eventName);
-
-                        if (index === 0) {
-                            this.onEdit()
-                        } else if (index === 4) {
-                            this.goToSettings(navigation);
-                        }
-                    }} />,
-
-            }),
-    },
+    Tenants: { screen: Tenants },
 
     CreateTenant: { screen: CreateTenant },
 
-    PaymentConfirmation: { screen: PaymentConfirmation,
+    PaymentConfirmation: { screen: PaymentConfirmation },
 
-            navigationOptions: ({navigation}) => ({
-                title: `${navigation.state.params.invoice.periodname}`,
-                headerStyle:{ backgroundColor: 'transparent'},
-            }),
-    },
-
-    TenantDetails: { screen: TenantDetails,
-
-            navigationOptions: ({navigation}) => ({
-                title: `${navigation.state.params.name}'s Profile`,
-                headerStyle:{ backgroundColor: 'transparent'},
-            }),
-    },
+    TenantDetail: { screen: Tenant },
 
     NextInvoice: {screen: InvoiceCreator},
 
     Settings: { screen: Settings},
+
+    Payment: { screen: Payment},
 };
 
-export default Routes;
+let AppNavigator = StackNavigator(Routes, {headerMode: 'none',});
+
+export default AppNavigator;

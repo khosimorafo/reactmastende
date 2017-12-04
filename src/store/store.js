@@ -1,5 +1,5 @@
 import { AsyncStorage } from 'react-native';
-import { createStore } from 'redux';
+import {applyMiddleware, compose, createStore} from 'redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 import client from './apolloClient';
@@ -30,11 +30,10 @@ if (!isProduction && isClient) {
         enhancers.push(devToolsExtension());
     }
 }
-
-/*const composedEnhancers = compose(
+const composedEnhancers = compose(
     applyMiddleware(...middlewares),
     ...enhancers
-);*/
+);
 
 /* Hopefully by now you understand what a store is and how redux uses them,
  * But if not, take a look at: https://github.com/reactjs/redux/blob/master/docs/api/createStore.md
@@ -43,13 +42,13 @@ if (!isProduction && isClient) {
 const store = createStore(
     rootReducer,
     initialState,
-    //composedEnhancers,
+    composedEnhancers,
     autoRehydrate(),
 );
 
 
 // Add the autoRehydrate middleware to your redux store
-const store_ = createStore(rootReducer, autoRehydrate());
+//const store_ = createStore(rootReducer, autoRehydrate());
 
 //const createStoreWithMiddleware = applyMiddleware(...middlewares)(store);
 
@@ -67,9 +66,16 @@ const store_ = createStore(rootReducer, autoRehydrate());
     });
 }*/
 
-export { store };
+//export { store };
 
-export default configureStore = (onComplete) => {
+export default configureStore = (navReducer, onComplete) => {
+
+    let store = createStore(
+        rootReducer,
+        initialState,
+        composedEnhancers,
+        autoRehydrate(),
+    );
 
     persistStore(store, { storage: AsyncStorage }, onComplete);
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Button, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import {Button, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import Modal from 'react-native-modal';
 
 import { connect } from 'react-redux'
@@ -71,39 +71,49 @@ class Settings extends Component {
     render() {
 
         return (
-            <ScrollView>
 
-                {this._renderButton('Add New Config!', () => this.setState({ visibleModal: 1 }))}
+            <View>
 
-                <ConfigList onPressItem={this.onConfigSelected} />
+                <ScrollView>
 
-                <Modal
-                    isVisible={this.state.visibleModal === 0}
-                    backdropOpacity={1}
-                    animationIn={'zoomInDown'}
-                    animationOut={'zoomOutUp'}
-                    animationInTiming={1000}
-                    animationOutTiming={1000}
-                    backdropTransitionInTiming={1000}
-                    backdropTransitionOutTiming={1000}
-                >
-                    {this._renderModalContent()}
-                </Modal>
+                    {this._renderButton('Add New Config!', () => this.setState({ visibleModal: 1 }))}
 
-                <Modal
-                    isVisible={this.state.visibleModal === 1}
-                    backdropOpacity={1}
-                    animationIn={'zoomInDown'}
-                    animationOut={'zoomOutUp'}
-                    animationInTiming={1000}
-                    animationOutTiming={1000}
-                    backdropTransitionInTiming={1000}
-                    backdropTransitionOutTiming={1000}
-                >
-                    {this._renderAddNewConfig()}
-                </Modal>
+                    <ConfigList onPressItem={this.onConfigSelected} />
 
-            </ScrollView>
+                    <Modal
+                        isVisible={this.state.visibleModal === 0}
+                        backdropOpacity={1}
+                        animationIn={'zoomInDown'}
+                        animationOut={'zoomOutUp'}
+                        animationInTiming={1000}
+                        animationOutTiming={1000}
+                        backdropTransitionInTiming={1000}
+                        backdropTransitionOutTiming={1000}
+                    >
+                        {this._renderModalContent()}
+                    </Modal>
+
+                    <Modal
+                        isVisible={this.state.visibleModal === 1}
+                        backdropOpacity={1}
+                        animationIn={'zoomInDown'}
+                        animationOut={'zoomOutUp'}
+                        animationInTiming={1000}
+                        animationOutTiming={1000}
+                        backdropTransitionInTiming={1000}
+                        backdropTransitionOutTiming={1000}
+                    >
+                        {this._renderAddNewConfig()}
+                    </Modal>
+
+                </ScrollView>
+
+                <View style={styles.navbar}>
+                    <Text style={styles.titleText}>Application Settings</Text>
+                </View>
+
+                <StatusBar barStyle="light-content" />
+            </View>
         )
     }
 }
@@ -115,6 +125,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+
+    navbar: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 65,
+        backgroundColor: '#050B7A',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 65,
+    },
+    titleText: {
+        fontSize: 18,
+        color: '#fff',
+        fontWeight: '600',
+    },
+
     button: {
         backgroundColor: 'lightblue',
         padding: 12,
